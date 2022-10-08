@@ -115,6 +115,7 @@ for generation in tqdm(to_plot):
         plot_data(data[:, 0], data[:, 2], generation, path, language=LANGUAGE)
     figures.append(path)
 
+# last figure lasts longer
 for i in range(10):
     figures.append(path)
 

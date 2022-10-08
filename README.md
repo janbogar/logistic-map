@@ -10,3 +10,5 @@ pip install -r requirements.txt
 python logistic_map_compute.py
 python plot_results.py
 ```
+
+![](logistic_map.gif)
