@@ -20,6 +20,8 @@ os.makedirs("figs", exist_ok=True)
 
 MAX_GENERATION = 300
 LANGUAGE = "en"
+DPI = 500
+WORKERS_TO_PLOT = "all"
 
 plot_texts = {
     "sk": {
@@ -42,7 +44,9 @@ name_re = re.compile(
 for path in Path("data").iterdir():
     match = name_re.match(str(path))
     if match:
-        files_per_generation[int(match.group("generations"))].append(path)
+        if WORKERS_TO_PLOT != "all":
+            if int(match.group("worker")) in WORKERS_TO_PLOT:
+                files_per_generation[int(match.group("generations"))].append(path)
 
 print(
     f"Found {sum(map(len,files_per_generation.values()))} files with results for {len(files_per_generation)} different generations."
@@ -68,8 +72,7 @@ def read_file(path):
     )
 
 
-def plot_data(x, y, generation, path, language):
-    dpi = 500
+def plot_data(x, y, generation, path, language=LANGUAGE, dpi=DPI):
     fig = plt.figure(dpi=dpi)
     plt.scatter(x, y, marker=",", s=(72.0 / fig.dpi) ** 2, lw=0, c="navy")
     plt.title(plot_texts[language]["title"].format(generation))
@@ -78,12 +81,14 @@ def plot_data(x, y, generation, path, language):
 
     plt.tight_layout()
     plt.savefig(path, dpi=dpi)
+    plt.close("all")
 
 
 def load_data(files_per_generation, generation):
     headers, data = zip(*map(read_file, files_per_generation[generation]))
     headers = list(headers)
     data = np.vstack(data)
+
     assert sorted([i["worker"] for i in headers]) == list(range(len(headers)))
     assert data.shape == (sum([i["N_points"] for i in headers]), 3)
     assert all((i["generations"] == generation for i in headers))
