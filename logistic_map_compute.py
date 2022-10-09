@@ -22,7 +22,7 @@ def evolve(x, y, generations):
 
 
 def random_points(N_points, y_min, y_max, x_min, x_max, seed):
-    rng = np.random.default_rng(seed=42)
+    rng = np.random.default_rng(seed=seed)
     xs = rng.random((N_points,)) * (x_max - x_min) + x_min
     ys = rng.random((N_points,)) * (y_max - y_min) + y_min
     return xs, ys
